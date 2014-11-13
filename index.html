@@ -1,0 +1,254 @@
+        <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+        <html xmlns="http://www.w3.org/1999/xhtml">
+        <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>Music Flow</title>
+        <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
+        <style>
+        body {
+            background-image:url(Image/background.png);
+        }
+        </style>
+        </head>
+        
+        <body>
+        <section style = "position:fixed; top:580px; left:80px; background:"black"">
+        <audio id = "audio" controls = "controls">
+          <source src="music/MIKA-HappyEnding.mp3" type="audio/mpeg">
+        </audio>
+        </section>
+        <p id = "lyrics" style = "position:relative;top: 430px; right: 0px;
+        transition:ease-in-out;
+        text-align:center;
+         font-size:40px; 
+         color:rgb(225,225,225);
+         text-shadow:1px 1px 1px rgb(102,255,255);
+         font-family:Arial, Helvetica, sans-serif
+         ">
+        Mika-Happy Ending
+        </p> 
+        <svg id="chart" xmlns="http://www.w3.org/2000/svg" version="1.1">
+        </svg>
+        <p id = "t" style = "position:fixed; top: 0px; font-family:Arial, Helvetica, sans-serif; font-size:18px; color:rgb(225,225,225); right: 1250px; top: 30px">
+        Sentiment
+        </p>
+        <p style = "position:fixed; font-family:Arial, Helvetica, sans-serif; font-size:16px; color:rgb(153,153,153);right:1270px; top:490px">
+        Negative
+        </p>
+        <p style = "position:fixed; font-family:Arial, Helvetica, sans-serif; font-size:16px; color:rgb(255,102,153); right:1270px;top:110px">
+        Positive
+        </p>
+        <p style = "position:fixed; font-family:Arial, Helvetica, sans-serif; font-size:16px; color:rgb(255,255,153);right:1270px; top:282px">
+        Neutral
+        </p>
+        <p id = "t" style = "position:fixed; font-family:Arial, Helvetica, sans-serif; font-size:18px; color:rgb(225,225,225); right: 60px; top: 520px">
+        Frequency
+        </p>
+        <p id = "t" style = "position:fixed; font-family:Arial, Helvetica, sans-serif; font-size:16px; color:#CCC; right: 1200px; top: 522px">
+        Low
+        </p>
+        <p id = "t" style = "position:fixed; font-family:Arial, Helvetica, sans-serif; font-size:16px; color:#CCC; right: 190px; top: 522px">
+        High
+        </p>
+        <script>
+        var lyric  = new Array(
+        {time:"04.80",line:"This is the way you left me",value:"-6"}, 
+        {time:"06.82",line:"I'm not pretending",value:"-10"},
+        {time:"09.35",line:"No hope, no love, no glory",value:"2"},
+        {time:"11.96",line:"No happy ending",value:"10"},
+        {time:"15.60",line:"Wake up in the morning, stumble on my life",value:"0"}, 
+        {time:"20.04",line:"Can't get no love without sacrifice ",value:"-10"},
+        {time:"25.25",line:"If anything should happen, I guess I wish you well",value:"-6"},
+        {time:"30.12",line:"A little bit of heaven, but a little bit of hell ",value:"-2"},
+        {time:"35.19",line:"This is the hardest story that I've ever told",value:"2"},
+        {time:"40.03",line:"No hope, or love, or glory ",value:"2"},
+        {time:"41.59",line:"Happy endings gone forever more",value:"10"}, 
+        {time:"44.90",line:"I feel as if I feel as if I'm wastin'",value:"-10"}, 
+        {time:"54.12",line:"And I'm wastin' everyday",value:"-6"},
+        {time:"64.65",line:"This is the way you left me",value:"-6"}, 
+        {time:"67.01",line:"I'm not pretending",value:"-10"},
+        {time:"69.55",line:"No hope, no love, no glory",value:"2"}, 
+        {time:"72.00",line:"No happy ending",value:"10"}, 
+        {time:"74.77",line:"This is the way that we love",value:"10"},
+        {time:"76.87",line:"Like it's forever",value:"-6"},
+        {time:"79.51",line:"Then live the rest of our life",value:"2"}, 
+        {time:"81.95",line:"But not together",value:"-2"},
+        {time:"84.68",line:"2 o'clock in the morning, something's on my mind",value:"-2"}, 
+        {time:"89.65",line:"Can't get no rest; keep walkin' around ",value:"-4"},
+        {time:"94.62",line:"If I pretend that nothin' ever went wrong, I can get to my sleep",value:"-10"}, 
+        {time:"99.50",line:"I can think that we just carried on ",value:"-6"},
+        {time:"105.34",line:"This is the hardest story that I've ever told ",value:"2"},
+        {time:"110.04",line:"No hope, or love, or glory ",value:"2"},
+        {time:"111.92",line:"Happy endings gone forever more",value:"10"}, 
+        {time:"114.52",line:"I feel as if I feel as if I'm wastin'",value:"-10"},
+        {time:"123.90",line:"And I'm wastin' everyday",value:"-10"},
+        {time:"124.33",line:"This is the way you left me",value:"-6"},
+        {time:"127.44",line:"I'm not pretending",value:"-6"},
+        {time:"129.80",line:"No hope, no love, no glory",value:"2"},
+        {time:"141.95",line:"No happy ending ",value:"10"},
+        {time:"145.14",line:"This is the way that we love",value:"10"},
+        {time:"147.16",line:"Like it's forever",value:"-6"}, 
+        {time:"149.67",line:"Then live the rest of our life",value:"2"},
+        {time:"152.03",line:"But not together",value:"-2"}, 
+        {time:"154.40",line:"A Little bit of love",value:"10"}, 
+        {time:"158.38",line:"little bit of love",value:"10"},
+        {time:"163.34",line:"Little bit of love,",value:"10"}, 
+		{time:"174.34",line:"Little bit of love,",value:"10"}, 
+        {time:"177.31",line:"I feel as if I feel as if I'm wastin' ",value:"-10"},
+        {time:"184.36",line:"And I'm wastin' everyday ",value:"-10"},
+        {time:"187.04",line:"This is the way you left me",value:"-6"}, 
+        {time:"188.04",line:"I'm not pretending",value:"-10"},
+        {time:"189.98",line:"No hope, no love, no glory",value:"2"},
+        {time:"192.04",line:"No Happy Ending",value:"10"},
+        {time:"195.08",line:"This is the way that we love",value:"10"}, 
+        {time:"197.78",line:"Like it's forever. ",value:"-6"},
+        {time:"200.22",line:"To live the rest of our life",value:"2"}, 
+        {time:"202.58",line:"But not together",value:"-2"},
+        {time:"205.38",line:"This is the way you left me",value:"-6"},
+        {time:"207.79",line:"I'm not pretending",value:"-10"},
+        {time:"210.12",line:"No hope, no love, no glory",value:"2"}, 
+        {time:"212.57",line:"No Happy Ending",value:"10"}
+        );
+        var frequency = new Array();
+        $(document).ready(function() {
+             $.getJSON("Lyrics/MIKA-HappyEnding.json", function(data){
+            $.each(data, function(index, info){
+                frequency.push({time: info["time"], color: info["color"]});
+        });
+       
+        });
+          
+      });
+       
+        
+        
+        lyric[0].width = "0";
+        for(var i = 1; i < lyric.length; i++){
+            lyric[i].width = lyric[i].time - lyric[i - 1].time;
+        }
+        var a = document.getElementById("audio");
+        var vis = d3.select('#chart');
+        var data = new Array();
+         var lineFunc = d3.svg.line()
+                        .x(function(d){
+                            return 5*d.time + 80;})
+                        .y(function(d){
+                            return (-1*d.value + 10)*15 + 30;})
+                        .interpolate("basis");
+      
+         var path = vis.append('svg:path')
+                .attr('d', lineFunc(lyric))
+                .attr('stroke', "rgb(225,225,225)")
+                .attr('stroke-width', '5')
+                .attr('fill', 'none');
+                var svg = document.getElementById("chart");
+      setTimeout(function(){
+          for(var i = 0; i < frequency.length; i++){
+                        var newBar = document.createElementNS("http://www.w3.org/2000/svg", 'rect');
+                        var barWidth = 3.02;
+                        newBar.setAttribute("x", 5*frequency[i].time + 80);
+                        newBar.setAttribute("y", "0");
+                        newBar.setAttribute("width", barWidth);
+                        newBar.setAttribute("height", "400");
+                        newBar.style.opacity = "1";
+                        newBar.style.fill = frequency[i].color;
+                        newBar.style.position = "fixed";
+                        svg.insertBefore(newBar, svg.childNodes[0]);
+                       
+                    }	
+      }, 10000);
+	  for(var i = 15 ; i< 205; i++){
+		   var newBar = document.createElementNS("http://www.w3.org/2000/svg", 'rect');
+		   				var hue = 'rgb(' 
+						+ Math.floor(1.1842*i) +',' 
+						+ Math.floor(1.1842*i) +','
+						+ Math.floor(1.1842*i) +')';
+                        newBar.setAttribute("x", 5*i + 80);
+                        newBar.setAttribute("y", 420);
+                        newBar.setAttribute("width", 5);
+                        newBar.setAttribute("height", 10);
+                        newBar.style.opacity = "1";
+                        newBar.style.fill = hue;
+                        newBar.style.position = "fixed";
+                        svg.insertBefore(newBar, svg.childNodes[0]);
+	  }
+      var lookup = [];
+    var granularity = 10000;
+    var l = path.node().getTotalLength();
+    for(var i = 1; i <= granularity; i++) {
+        var p = path.node().getPointAtLength(l * (i/granularity))
+        lookup.push({
+            x: p.x,
+            y: p.y
+        })
+    }  
+/*    var cdata = [{value:"10", color:"rgb(255,106,106)"},{value: "6", color:"rgb(255,193,193)"}, {value: "2", color:"rgb(255,255,210)"},{value:"-2", color:"rgb(238,216,174)"},{value:"-6",color:"rgb(205,186,150)"}, {value:"-10", color:"rgb(139,115,85)"}];
+    for(var i = 0; i < cdata.length; i++){
+         var newCircle = document.createElementNS("http://www.w3.org/2000/svg", 'circle');
+         newCircle.setAttribute("cx", 600);
+         newCircle.setAttribute("cy", (-1*cdata[i].value + 10)*15 + 30);
+         newCircle.setAttribute("r", 10);
+         newCircle.style.fill = cdata[i].color;
+         svg.insertBefore(newCircle, svg.childNodes[0]);
+    }*/
+	
+
+		for(var i = 0; i < 220; i++){
+         var newCircle = document.createElementNS("http://www.w3.org/2000/svg", 'circle');
+         newCircle.setAttribute("cx", 5*i + 80);
+         newCircle.setAttribute("cy", 180);
+         newCircle.setAttribute("r", 2);
+         newCircle.style.fill = "rgb(255,255,210)";
+         svg.insertBefore(newCircle, svg.childNodes[0]);
+		}
+		
+	
+
+	var index;
+     var dragListener = d3.behavior.drag()
+            .on("drag", function() {
+          
+                    if(d3.event.dx <= 0){
+              
+                        for( index = 0; lookup[index].x < d3.event.x; index++);
+                        circle.attr("transform", "translate(" + [lookup[index].x, lookup[index].y] + ")");
+                    }
+                    else{
+                        for(index = lookup.length - 1; lookup[index].x > d3.event.x; index--);
+                         circle.attr("transform", "translate(" + [lookup[index].x, lookup[index].y] + ")");
+                    }			  
+            })
+            .on("dragend", function(){
+                var time = (lookup[index].x - 80)/5;
+                a.currentTime = time;
+                
+  });
+ 
+    var circle = d3.select("#chart").append("circle")
+        .attr("r", 13)
+        .attr("transform", "translate(" + [5*lyric[0].time + 80,(-1*lyric[0].value + 10)*15 + 30 ] + ")")
+        .style("fill", "rgb(244,164,96)")
+        .call(dragListener);
+    
+    var cur = 0;
+        a.ontimeupdate = function(){
+            
+            for(var i = cur; i < lookup.length; i++){
+            
+                if(this.currentTime*5 + 80 - lookup[i].x <= 0.1 && this.currentTime*5 + 80 - lookup[i].x >= -0.1){
+                    circle.attr("transform", "translate(" + [lookup[i].x, lookup[i].y] + ")");
+                    cur++;
+                }
+            }
+            for(var i = 0; i < lyric.length; i++){
+                if(lyric[i].time <= this.currentTime){
+                    document.getElementById("lyrics").innerHTML = lyric[i].line;
+                }
+            }
+           
+        }
+        </script>
+        </body>
+        </html>
+        
